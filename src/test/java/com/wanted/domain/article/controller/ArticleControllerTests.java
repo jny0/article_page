@@ -18,8 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -32,7 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ArticleControllerTests {
     @Autowired
     private MockMvc mvc;
-
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
@@ -46,17 +44,17 @@ class ArticleControllerTests {
     void beforeEachTest() {
         testMember = new Member("test@example.com", passwordEncoder.encode("password123"));
         memberRepository.save(testMember);
-
+        memberRepository.save(new Member("test2@example.com", passwordEncoder.encode("password123")));
         testArticle = new Article("테스트제목", "테스트내용", testMember);
         articleRepository.save(testArticle);
     }
 
     @Test
     @WithMockUser(username = "test@example.com", authorities = "MEMBER")
-    @DisplayName("POST /article/create - 게시글 생성 성공")
+    @DisplayName("POST /article - 게시글 생성 성공")
     void createSuccessTest() throws Exception {
         ResultActions resultActions = mvc
-                .perform(post("/article/create")
+                .perform(post("/article")
                         .content("""
                                 {
                                     "title": "제목",
@@ -77,11 +75,11 @@ class ArticleControllerTests {
     }
 
     @Test
-    @WithMockUser(username = "test1@example.com", authorities = "MEMBER")
-    @DisplayName("POST /article/create - 게시글 생성 실패, 존재하지 않는 회원")
+    @WithMockUser(username = "unknown@example.com", authorities = "MEMBER")
+    @DisplayName("POST /article - 게시글 생성 실패, 존재하지 않는 회원")
     void createFailTest() throws Exception {
         ResultActions resultActions = mvc
-                .perform(post("/article/create")
+                .perform(post("/article")
                         .content("""
                                 {
                                     "title": "제목",
@@ -98,7 +96,7 @@ class ArticleControllerTests {
     }
 
     @Test
-    @DisplayName("GET /article/create - 게시글 단건 조회 성공")
+    @DisplayName("GET /article/{id} - 게시글 단건 조회 성공")
     void showDetailSuccessTests() throws Exception {
         ResultActions resultActions = mvc
                 .perform(get("/article/%s".formatted(testArticle.getId())))
@@ -109,6 +107,86 @@ class ArticleControllerTests {
                 .andExpect(jsonPath("$.resultCode").value("S-1"))
                 .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.data.article.id").value(testArticle.getId()));
+        ;
+    }
+
+    @Test
+    @WithMockUser(username = "test@example.com", authorities = "MEMBER")
+    @DisplayName("PATCH /article/{id} - 게시글 수정 성공")
+    void updateSuccessTest() throws Exception {
+        ResultActions resultActions = mvc
+                .perform(patch("/article/%s".formatted(testArticle.getId()))
+                        .content("""
+                                {
+                                    "title": "제목 수정",
+                                    "content": "내용 수정"
+                                }
+                                """.stripIndent())
+                        .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8)))
+                .andDo(print());
+
+        resultActions
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.resultCode").value("S-1"))
+                .andExpect(jsonPath("$.message").exists())
+                .andExpect(jsonPath("$.data").exists())
+                .andExpect(jsonPath("$.data.article.title").value("제목 수정"))
+                .andExpect(jsonPath("$.data.article.content").value("내용 수정"))
+        ;
+    }
+
+    @Test
+    @WithMockUser(username = "test2@example.com", authorities = "MEMBER")
+    @DisplayName("PATCH /article/{id} - 게시글 수정 실패 - 권한없음")
+    void updateFailTest() throws Exception {
+        ResultActions resultActions = mvc
+                .perform(patch("/article/%s".formatted(testArticle.getId()))
+                        .content("""
+                                {
+                                    "title": "제목 수정",
+                                    "content": "내용 수정"
+                                }
+                                """.stripIndent())
+                        .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8)))
+                .andDo(print());
+
+        resultActions
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.resultCode").value("F-2"))
+                .andExpect(jsonPath("$.message").exists())
+                .andExpect(jsonPath("$.data").doesNotExist())
+        ;
+    }
+
+    @Test
+    @WithMockUser(username = "test@example.com", authorities = "MEMBER")
+    @DisplayName("DELETE /article/{id} - 게시글 삭제 성공")
+    void deleteSuccessTest() throws Exception {
+        ResultActions resultActions = mvc
+                .perform(delete("/article/%s".formatted(testArticle.getId())))
+                .andDo(print());
+
+        resultActions
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.resultCode").value("S-1"))
+                .andExpect(jsonPath("$.message").exists())
+                .andExpect(jsonPath("$.data").doesNotExist())
+        ;
+    }
+
+    @Test
+    @WithMockUser(username = "test2@example.com", authorities = "MEMBER")
+    @DisplayName("DELETE /article/{id} - 게시글 삭제 실패 - 권한없음")
+    void deleteFailTest() throws Exception {
+        ResultActions resultActions = mvc
+                .perform(delete("/article/%s".formatted(testArticle.getId())))
+                .andDo(print());
+
+        resultActions
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.resultCode").value("F-2"))
+                .andExpect(jsonPath("$.message").exists())
+                .andExpect(jsonPath("$.data").doesNotExist())
         ;
     }
 }

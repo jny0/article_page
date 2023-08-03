@@ -34,4 +34,9 @@ public class Article extends BaseEntity {
                 .author(member)
                 .build();
     }
+
+    public void update(ArticleRequest articleRequest){
+        this.title = articleRequest.getTitle();
+        this.content = articleRequest.getContent();
+    }
 }
