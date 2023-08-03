@@ -8,10 +8,15 @@ import com.wanted.global.dto.ResponseDTO;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/member")
@@ -21,12 +26,21 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/join")
-    public ResponseDTO<JoinResponse> join(@Valid @RequestBody MemberRequest memberRequest){
-        return memberService.join(memberRequest);
+    public ResponseEntity<?> join(@Valid @RequestBody MemberRequest memberRequest){
+        ResponseDTO<JoinResponse> response = memberService.join(memberRequest);
+        if(response.isFail()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/login")
-    public ResponseDTO<LoginResponse> login(@Valid @RequestBody MemberRequest memberRequest, HttpServletResponse resp){
-        return memberService.login(memberRequest);
+    public ResponseEntity<?> login(@Valid @RequestBody MemberRequest memberRequest){
+        ResponseDTO<LoginResponse> response =  memberService.login(memberRequest);
+        if(response.isFail()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
 }

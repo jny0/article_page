@@ -23,6 +23,9 @@ public class MemberService {
 
     @Transactional
     public ResponseDTO<JoinResponse> join(MemberRequest memberRequest){
+        if(isEmailAlreadyExists(memberRequest.getEmail())){
+            return ResponseDTO.of("F-1", "해당 이메일은 이미 사용중입니다.");
+        }
         Member member = new Member(memberRequest.getEmail(), passwordEncoder.encode(memberRequest.getPassword()));
         memberRepository.save(member);
         return ResponseDTO.of("S-1", "회원가입 성공", new JoinResponse(member));
@@ -44,6 +47,11 @@ public class MemberService {
 
     public Optional<Member> findByEmail(String email){
         return memberRepository.findByEmail(email);
+    }
+
+    private boolean isEmailAlreadyExists(String email) {
+        Optional<Member> existingMember = findByEmail(email);
+        return existingMember.isPresent();
     }
 
     private String generateAccessToken(Member member){

@@ -66,7 +66,7 @@ class MemberControllerTests {
 
     @Test
     @DisplayName("POST /member/join 회원가입 실패 - 이메일 형식 오류")
-    void joinFailTest() throws Exception {
+    void joinFailTest01() throws Exception {
         ResultActions resultActions = mvc
                 .perform(post("/member/join")
                         .content("""
@@ -80,8 +80,27 @@ class MemberControllerTests {
 
         resultActions
                 .andExpect(status().is4xxClientError());
-
     }
+
+    @Test
+    @DisplayName("POST /member/join 회원가입 실패 - 중복된 이메일")
+    void joinFailTest02() throws Exception {
+        ResultActions resultActions = mvc
+                .perform(post("/member/join")
+                        .content("""
+                                {
+                                    "email": "test@example.com",
+                                    "password": "password123"
+                                }
+                                """.stripIndent())
+                        .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8)))
+                .andDo(print());
+
+        resultActions
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.resultCode").value("F-1"));
+    }
+
 
     @Test
     @DisplayName("POST /member/login 로그인 성공")
@@ -126,7 +145,7 @@ class MemberControllerTests {
                 .andDo(print());
 
         resultActions
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.resultCode").value("F-1"))
                 .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.data").doesNotExist());
@@ -150,7 +169,7 @@ class MemberControllerTests {
                 .andDo(print());
 
         resultActions
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.resultCode").value("F-2"))
                 .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.data").doesNotExist());
