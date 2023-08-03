@@ -37,7 +37,6 @@ public class MemberService {
         if(member == null){
             return ResponseDTO.of("F-1", "존재하지 않는 회원입니다.");
         }
-
         if(!passwordEncoder.matches(memberRequest.getPassword(), member.getPassword())){
             return ResponseDTO.of("F-2", "비밀번호를 확인해주세요.");
         }

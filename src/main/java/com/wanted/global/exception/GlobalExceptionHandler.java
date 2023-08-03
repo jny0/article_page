@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.stream.Collectors;
 
-@RestControllerAdvice(annotations = {RestController.class})
+@RestControllerAdvice(annotations = {RestController.class}) // 모든 예외
 public class GlobalExceptionHandler {
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler(MethodArgumentNotValidException.class) // 유효성 검사 예외
     public ResponseEntity<ResponseDTO<String>> handleValidationErrors(MethodArgumentNotValidException exception) {
 
         String errorMessage = exception

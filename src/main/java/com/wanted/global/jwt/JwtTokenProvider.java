@@ -11,9 +11,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.time.Instant;
 import java.util.Base64;
-import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Component
@@ -57,12 +55,5 @@ public class JwtTokenProvider {
             }
         }
 
-        public static Map<String, Object> toMap(String jsonStr) {
-            try {
-                return new ObjectMapper().readValue(jsonStr, LinkedHashMap.class);
-            } catch (JsonProcessingException e) {
-                return Collections.emptyMap();
-            }
-        }
     }
 }
