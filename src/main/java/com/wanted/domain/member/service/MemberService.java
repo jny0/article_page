@@ -2,7 +2,7 @@ package com.wanted.domain.member.service;
 
 import com.wanted.domain.member.dto.JoinResponse;
 import com.wanted.domain.member.dto.LoginResponse;
-import com.wanted.domain.member.dto.MemberRequeset;
+import com.wanted.domain.member.dto.MemberRequest;
 import com.wanted.domain.member.entity.Member;
 import com.wanted.domain.member.repository.MemberRepository;
 import com.wanted.global.dto.ResponseDTO;
@@ -22,20 +22,20 @@ public class MemberService {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
-    public ResponseDTO<JoinResponse> join(MemberRequeset memberRequeset){
-        Member member = new Member(memberRequeset.getEmail(), passwordEncoder.encode(memberRequeset.getPassword()));
+    public ResponseDTO<JoinResponse> join(MemberRequest memberRequest){
+        Member member = new Member(memberRequest.getEmail(), passwordEncoder.encode(memberRequest.getPassword()));
         memberRepository.save(member);
         return ResponseDTO.of("S-1", "회원가입 성공", new JoinResponse(member));
     }
 
     @Transactional
-    public ResponseDTO<LoginResponse> login(MemberRequeset memberRequeset){
-        Member member = findByEmail(memberRequeset.getEmail()).orElse(null);
+    public ResponseDTO<LoginResponse> login(MemberRequest memberRequest){
+        Member member = findByEmail(memberRequest.getEmail()).orElse(null);
         if(member == null){
             return ResponseDTO.of("F-1", "존재하지 않는 회원입니다.");
         }
 
-        if(!passwordEncoder.matches(memberRequeset.getPassword(), member.getPassword())){
+        if(!passwordEncoder.matches(memberRequest.getPassword(), member.getPassword())){
             return ResponseDTO.of("F-2", "비밀번호를 확인해주세요.");
         }
         String accessToken = generateAccessToken(member);
