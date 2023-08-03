@@ -30,7 +30,15 @@ public class GlobalExceptionHandler {
                 .map(DefaultMessageSourceResolvable::getCode)
                 .collect(Collectors.joining("/"));
 
-        ResponseDTO<String> response = new ResponseDTO<>("E-400", errorMessage, data);
+        ResponseDTO<String> response = new ResponseDTO<>("E-MethodArgumentNotValidException", errorMessage, data);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ResponseDTO<String>> errorHandler(RuntimeException exception) {
+        String errorMessage = exception.getMessage();
+
+        ResponseDTO<String> response = new ResponseDTO<>("E-RuntimeException", errorMessage, null);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 }
