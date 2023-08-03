@@ -41,11 +41,14 @@ public class MemberService {
             return ResponseDTO.of("F-2", "비밀번호를 확인해주세요.");
         }
         String accessToken = generateAccessToken(member);
-        return ResponseDTO.of("S-1", "로그인 성공", new LoginResponse(member, accessToken));
+        return ResponseDTO.of("S-1", "로그인 성공", new LoginResponse(accessToken));
     }
 
     public Optional<Member> findByEmail(String email){
         return memberRepository.findByEmail(email);
+    }
+    public Optional<Member> findById(Long id){
+        return memberRepository.findById(id);
     }
 
     private boolean isEmailAlreadyExists(String email) {
