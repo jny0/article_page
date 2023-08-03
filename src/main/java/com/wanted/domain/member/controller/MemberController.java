@@ -1,9 +1,11 @@
 package com.wanted.domain.member.controller;
 
-import com.wanted.domain.member.dto.JoinRequest;
-import com.wanted.domain.member.dto.MemberResponse;
+import com.wanted.domain.member.dto.LoginResponse;
+import com.wanted.domain.member.dto.MemberRequeset;
+import com.wanted.domain.member.dto.JoinResponse;
 import com.wanted.domain.member.service.MemberService;
 import com.wanted.global.dto.ResponseDTO;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,12 +21,12 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/join")
-    public ResponseDTO<MemberResponse> join(@Valid @RequestBody JoinRequest joinRequest){
-        return memberService.join(joinRequest);
+    public ResponseDTO<JoinResponse> join(@Valid @RequestBody MemberRequeset memberRequeset){
+        return memberService.join(memberRequeset);
     }
 
     @PostMapping("/login")
-    public ResponseDTO<MemberResponse> login(@Valid @RequestBody JoinRequest joinRequest){
-        return memberService.join(joinRequest);
+    public ResponseDTO<LoginResponse> login(@Valid @RequestBody MemberRequeset memberRequeset, HttpServletResponse resp){
+        return memberService.login(memberRequeset);
     }
 }

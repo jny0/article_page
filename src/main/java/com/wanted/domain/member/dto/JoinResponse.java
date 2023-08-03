@@ -6,6 +6,6 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class MemberResponse{
+public class JoinResponse {
     private final Member member;
 }

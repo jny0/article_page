@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -20,5 +22,12 @@ public class Member extends BaseEntity {
     public Member(String email, String password){
         this.email = email;
         this.password = password;
+    }
+
+    public Map<String, Object> toClaims(){
+        return Map.of(
+                "id", getId(),
+                "email", getEmail()
+        );
     }
 }

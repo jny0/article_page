@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class JoinRequest {
+public class MemberRequeset {
     @NotBlank
     @Pattern(regexp = ".*@.*", message = "이메일 형식이 올바르지 않습니다.")
     private String email;
