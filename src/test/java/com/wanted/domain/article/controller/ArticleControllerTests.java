@@ -1,5 +1,7 @@
 package com.wanted.domain.article.controller;
 
+import com.wanted.domain.article.entity.Article;
+import com.wanted.domain.article.repository.ArticleRepository;
 import com.wanted.domain.member.entity.Member;
 import com.wanted.domain.member.repository.MemberRepository;
 import org.junit.jupiter.api.*;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -34,12 +37,18 @@ class ArticleControllerTests {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private ArticleRepository articleRepository;
     private Member testMember;
+    private Article testArticle;
 
     @BeforeEach
     void beforeEachTest() {
         testMember = new Member("test@example.com", passwordEncoder.encode("password123"));
         memberRepository.save(testMember);
+
+        testArticle = new Article("테스트제목", "테스트내용", testMember);
+        articleRepository.save(testArticle);
     }
 
     @Test
@@ -85,6 +94,21 @@ class ArticleControllerTests {
         resultActions
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.resultCode").value("E-RuntimeException"))
+        ;
+    }
+
+    @Test
+    @DisplayName("GET /article/create - 게시글 단건 조회 성공")
+    void showDetailSuccessTests() throws Exception {
+        ResultActions resultActions = mvc
+                .perform(get("/article/%s".formatted(testArticle.getId())))
+                .andDo(print());
+
+        resultActions
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.resultCode").value("S-1"))
+                .andExpect(jsonPath("$.message").exists())
+                .andExpect(jsonPath("$.data.article.id").value(testArticle.getId()));
         ;
     }
 }

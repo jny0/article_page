@@ -4,6 +4,7 @@ import com.wanted.global.jwt.JwtAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -23,6 +24,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         authorizeHttpRequests -> authorizeHttpRequests
                                 .requestMatchers("/member/*").permitAll() // 회원가입, 로그인 인증 없이 접근 가능
+                                .requestMatchers(HttpMethod.GET, "/article/*").permitAll() // 게시글 조회 인증 없이 가능
                                 .anyRequest().authenticated() // 나머지 인증된 사용자만 가능
                 )
                 .cors().disable() // 다른 도메인에서 API 호출 가능
