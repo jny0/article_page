@@ -8,4 +8,8 @@ import lombok.Data;
 @AllArgsConstructor
 public class JoinResponse {
     private final Member member;
+
+    public static JoinResponse of(Member member){
+        return new JoinResponse(member);
+    }
 }

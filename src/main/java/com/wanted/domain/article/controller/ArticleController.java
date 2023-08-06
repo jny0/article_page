@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,7 @@ public class ArticleController {
     private final ArticleService articleService;
     private final MemberService memberService;
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("")
     public ResponseEntity<?> create(@AuthenticationPrincipal User user, @Valid @RequestBody ArticleRequest articleRequest){
         Member author = memberService.findByEmail(user.getUsername()).orElseThrow();
@@ -49,6 +51,7 @@ public class ArticleController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PatchMapping("/{articleId}")
     public ResponseEntity<?> update(@AuthenticationPrincipal User user,
                                     @Valid @RequestBody ArticleRequest articleRequest,
@@ -62,6 +65,7 @@ public class ArticleController {
         return ResponseEntity.status(HttpStatus.OK).body(updateResponse);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{articleId}")
     public ResponseEntity<?> delete(@AuthenticationPrincipal User user, @PathVariable Long articleId){
         Member author = memberService.findByEmail(user.getUsername()).orElseThrow();

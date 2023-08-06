@@ -28,7 +28,7 @@ public class MemberService {
         }
         Member member = new Member(memberRequest.getEmail(), passwordEncoder.encode(memberRequest.getPassword()));
         memberRepository.save(member);
-        return ResponseDTO.of("S-1", "회원가입 성공", new JoinResponse(member));
+        return ResponseDTO.of("S-1", "회원가입 성공", JoinResponse.of(member));
     }
 
     @Transactional
@@ -41,7 +41,7 @@ public class MemberService {
             return ResponseDTO.of("F-2", "비밀번호 확인 필요");
         }
         String accessToken = generateAccessToken(member);
-        return ResponseDTO.of("S-1", "로그인 성공", new LoginResponse(accessToken));
+        return ResponseDTO.of("S-1", "로그인 성공", LoginResponse.of(accessToken));
     }
 
     public Optional<Member> findByEmail(String email){
