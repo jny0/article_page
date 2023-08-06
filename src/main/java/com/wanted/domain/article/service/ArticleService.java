@@ -45,7 +45,7 @@ public class ArticleService {
     }
 
     public Page<Article> findAll(Pageable pageable) {
-        return articleRepository.findAll(pageable);
+        return articleRepository.findAllByOrderByCreateDate(pageable);
     }
 
     @Transactional

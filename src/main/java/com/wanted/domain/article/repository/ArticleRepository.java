@@ -14,6 +14,5 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     Optional<Article> findById(Long id);
 
     @EntityGraph(attributePaths = "author")
-    @Query("select a from Article a order by a.createDate")
-    Page<Article> findAll(Pageable pageable);
+    Page<Article> findAllByOrderByCreateDate(Pageable pageable);
 }
