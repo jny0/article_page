@@ -1,0 +1,19 @@
+version: "3"
+services:
+  app:
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+      - '81:81'
+    environment:
+      TZ: "Asia/Seoul"
+      DB_MYSQL_HOST: "172.17.0.1"
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: "your_db_username"
+      DB_MYSQL_PASSWORD: "your_db_password"
+      DB_MYSQL_NAME: "nginx"
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
