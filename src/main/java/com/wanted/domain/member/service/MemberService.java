@@ -24,28 +24,31 @@ public class MemberService {
     @Transactional
     public ResponseDTO<JoinResponse> join(MemberRequest memberRequest){
         if(isEmailAlreadyExists(memberRequest.getEmail())){
-            return ResponseDTO.of("F-1", "해당 이메일은 이미 사용중입니다.");
+            return ResponseDTO.of("F-1", "이미 사용 중인 이메일");
         }
         Member member = new Member(memberRequest.getEmail(), passwordEncoder.encode(memberRequest.getPassword()));
         memberRepository.save(member);
-        return ResponseDTO.of("S-1", "회원가입 성공", new JoinResponse(member));
+        return ResponseDTO.of("S-1", "회원가입 성공", JoinResponse.of(member));
     }
 
     @Transactional
     public ResponseDTO<LoginResponse> login(MemberRequest memberRequest){
         Member member = findByEmail(memberRequest.getEmail()).orElse(null);
         if(member == null){
-            return ResponseDTO.of("F-1", "존재하지 않는 회원입니다.");
+            return ResponseDTO.of("F-1", "존재하지 않는 회원");
         }
         if(!passwordEncoder.matches(memberRequest.getPassword(), member.getPassword())){
-            return ResponseDTO.of("F-2", "비밀번호를 확인해주세요.");
+            return ResponseDTO.of("F-2", "비밀번호 확인 필요");
         }
         String accessToken = generateAccessToken(member);
-        return ResponseDTO.of("S-1", "로그인 성공", new LoginResponse(member, accessToken));
+        return ResponseDTO.of("S-1", "로그인 성공", LoginResponse.of(accessToken));
     }
 
     public Optional<Member> findByEmail(String email){
         return memberRepository.findByEmail(email);
+    }
+    public Optional<Member> findById(Long id){
+        return memberRepository.findById(id);
     }
 
     private boolean isEmailAlreadyExists(String email) {

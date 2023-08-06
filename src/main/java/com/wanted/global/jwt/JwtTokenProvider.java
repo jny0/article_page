@@ -11,7 +11,9 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.time.Instant;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Component
@@ -45,6 +47,30 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    public boolean verify(String token) {
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(getSecretKey())
+                    .build()
+                    .parseClaimsJws(token);
+        } catch (Exception e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public Map<String, Object> getClaims(String token) {
+        String body = Jwts.parserBuilder()
+                .setSigningKey(getSecretKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("body", String.class);
+
+        return Json.toMap(body);
+    }
+
     private static class Json {
 
         public static String toStr(Object obj) {
@@ -52,6 +78,14 @@ public class JwtTokenProvider {
                 return new ObjectMapper().writeValueAsString(obj);
             } catch (JsonProcessingException e) {
                 return null;
+            }
+        }
+
+        public static Map<String, Object> toMap(String jsonStr) {
+            try {
+                return new ObjectMapper().readValue(jsonStr, LinkedHashMap.class);
+            } catch (JsonProcessingException e) {
+                return Collections.emptyMap();
             }
         }
 

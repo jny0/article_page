@@ -1,4 +1,4 @@
-package com.wanted.member;
+package com.wanted.domain.member.controller;
 
 import com.wanted.domain.member.entity.Member;
 import com.wanted.domain.member.repository.MemberRepository;
