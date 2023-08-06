@@ -8,7 +8,6 @@ import com.wanted.domain.member.service.MemberService;
 import com.wanted.global.dto.ResponseDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;

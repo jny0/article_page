@@ -96,6 +96,31 @@ class ArticleControllerTests {
     }
 
     @Test
+    @DisplayName("GET /article/ - 게시글 목록 조회 성공")
+    void getListSuccessTest() throws Exception {
+        Article testArticle2 = new Article("테스트제목2", "테스트내용2", testMember);
+        Article testArticle3 = new Article("테스트제목3", "테스트내용3", testMember);
+        articleRepository.save(testArticle2);
+        articleRepository.save(testArticle3);
+
+        ResultActions resultActions = mvc
+                .perform(get("/article"))
+                .andDo(print());
+
+        resultActions
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.resultCode").value("S-1"))
+                .andExpect(jsonPath("$.message").exists())
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(jsonPath("$.data.length()").value(3))
+                .andExpect(jsonPath("$.data[0].article.id").value(testArticle.getId()))
+                .andExpect(jsonPath("$.data[0].article.title").value(testArticle.getTitle()))
+                .andExpect(jsonPath("$.data[0].article.content").value(testArticle.getContent()))
+                .andExpect(jsonPath("$.data[0].authorId").value(testArticle.getAuthor().getId()));
+        ;
+    }
+
+    @Test
     @DisplayName("GET /article/{id} - 게시글 단건 조회 성공")
     void showDetailSuccessTests() throws Exception {
         ResultActions resultActions = mvc
