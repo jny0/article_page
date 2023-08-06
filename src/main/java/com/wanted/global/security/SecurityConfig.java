@@ -24,6 +24,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         authorizeHttpRequests -> authorizeHttpRequests
                                 .requestMatchers("/member/*").permitAll() // 회원가입, 로그인 인증 없이 접근 가능
+                                .requestMatchers(HttpMethod.GET, "/article").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/article/*").permitAll() // 게시글 조회 인증 없이 가능
                                 .anyRequest().authenticated() // 나머지 인증된 사용자만 가능
                 )

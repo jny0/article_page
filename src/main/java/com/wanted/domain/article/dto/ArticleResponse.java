@@ -7,5 +7,10 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ArticleResponse {
+    private Long authorId;
     private Article article;
+
+    public static ArticleResponse of(Article article){
+        return new ArticleResponse(article.getAuthor().getId(), article);
+    }
 }

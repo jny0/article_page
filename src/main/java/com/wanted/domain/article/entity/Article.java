@@ -1,5 +1,6 @@
 package com.wanted.domain.article.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wanted.domain.article.dto.ArticleRequest;
 import com.wanted.domain.member.entity.Member;
 import com.wanted.global.base.entitiy.BaseEntity;
@@ -24,6 +25,7 @@ public class Article extends BaseEntity {
     @NotNull
     @Column(columnDefinition = "TEXT")
     String content;
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     Member author;
 

@@ -8,11 +8,16 @@ import com.wanted.domain.member.service.MemberService;
 import com.wanted.global.dto.ResponseDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/article")
@@ -26,6 +31,14 @@ public class ArticleController {
         Member author = memberService.findByEmail(user.getUsername()).orElseThrow();
         ResponseDTO<ArticleResponse> response =  articleService.create(articleRequest, author);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("")
+    public ResponseEntity<?> getList(@RequestParam(defaultValue = "0") int pageNumber,
+                                     @RequestParam(defaultValue = "3") int pageSize){
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        ResponseDTO<List<ArticleResponse>> response =  articleService.getList(pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/{articleId}")
