@@ -1,12 +1,5 @@
-# wanted-pre-onboarding-backend 사전과제
 
-
-## 1. 지원자
-**박진영**
-
-</br>
-
-## 2. 애플리케이션 실행 방법
+##  애플리케이션 실행 방법
 
 1. 프로젝트 클론
 ```
@@ -89,19 +82,19 @@ java -jar -Dspring.profiles.active=prod build/libs/wanted-0.0.1-SNAPSHOT.jar
 </br>
 
 
-## 3. 데이터베이스 테이블 구조
+## 데이터베이스 테이블 구조
 ![ERD.png](https://velog.velcdn.com/images/jyp1102/post/a37c9d30-0133-4e25-b8a1-e0a885da677c/image.png)
 - article과 member를 ManyToOne으로 설정
 - 각 테이블마다 id, createDate, modifyDate 공통적으로 포함
 
 </br>
 
-## 4. 구현한 API의 동작을 촬영한 데모 영상 링크
+## 구현한 API의 동작을 촬영한 데모 영상 링크
 [데모 영상](https://drive.google.com/file/d/1OCxvmy0e606NpbxXn_ltvvxJgc83m1QY/view?usp=sharing)
 
 </br>
 
-## 5. 구현 방법 및 이유에 대한 간략한 설명
+## 구현 방법 및 이유
 - 도메인별 응집도를 높이기 위해 도메인형 패키지 구조를 선택했습니다. 
 - ResponseDTO를 사용해 응답에 공통적으로 resultCode, message, data를 포함하도록 했습니다.
 
@@ -129,12 +122,12 @@ java -jar -Dspring.profiles.active=prod build/libs/wanted-0.0.1-SNAPSHOT.jar
 
 </br>
 
-## 6. API 명세(request/response 포함)
+## API 명세(request/response 포함)
 [POSTMAN API 명세서](https://documenter.getpostman.com/view/27461750/2s9XxySZ7L)
 
 </br>
 
-## 7. 가산점 요소
+## 추가 구현
 **1. 테스트**
 - `MemberController`와 `ArticleController`에 대한 단위테스트를 진행했습니다.
 
